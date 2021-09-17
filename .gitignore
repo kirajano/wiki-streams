@@ -130,3 +130,4 @@ dmypy.json
 
 # kakfa
 kafka/data/*
+kafka/kafka_connect_test
