@@ -154,11 +154,11 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 ### Kafka Connect
 ---
 
-Connector
-Schema
-Transforms (optional) used for single message transforms - also used in config format
-Converter (writes into key value(bytes))
-Task
-Modes: Standalone vs. Distrubuted (maybe better choice since fault taulerant)
-errors.tolerance=all
-errors.deadletterqueue.topic.name=${bad_kafka_topic_for_inspection_of_bugs}
+* Connector
+* Schema
+* Transforms (optional) used for single message transforms - also used in config format
+* Converter (writes into key value(bytes))
+* Task
+* Modes: Standalone vs. Distrubuted (maybe better choice since fault taulerant)
+* errors.tolerance=all
+* errors.deadletterqueue.topic.name=${bad_kafka_topic_for_inspection_of_bugs}
