@@ -157,3 +157,15 @@ Wikimedia is using Kafka under the hood with a custom build KafkaSSE connector b
 
 Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.com/cjmatta/kafka-connect-sse)) to stream data into the cluster.
 
+
+### Kafka Connect
+---
+
+* Connector
+* Schema
+* Transforms (optional) used for single message transforms - also used in config format
+* Converter (writes into key value(bytes))
+* Task
+* Modes: Standalone vs. Distrubuted (maybe better choice since fault taulerant)
+* errors.tolerance=all
+* errors.deadletterqueue.topic.name=${bad_kafka_topic_for_inspection_of_bugs}
