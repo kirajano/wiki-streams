@@ -149,4 +149,11 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 <p> Stream is opened up for a <u>defined</u> time. The opening is happening different for RC endpoint and RV endpoints. RC is usually ahead (assumed). The sync term between end points will be dubbed as "catch-up". There are two options to approach "catch-up". First, start RC before RV. Second is start both parallel but have different times - RV should be longer. Which is option is based, is not known.</p>
 
 2. Real Stream
+Using local Kafka connect.
+
+---
+## Wikipedia EventStreams Architecture
+Wikimedia is using Kafka under the hood with a custom build KafkaSSE connector by the Wikipedia.org team. The SSE client is connected to internal Kafka consumers and exposed via HTTP to external clients. More information on Wikimedia EventStreams architecture can be found [here](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams).
+
+Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.com/cjmatta/kafka-connect-sse)) to stream data into the cluster.
 
