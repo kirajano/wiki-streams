@@ -152,20 +152,20 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 Using local Kafka connect.
 
 ---
-## Wikipedia EventStreams Architecture
+### Wikipedia EventStreams Architecture
 Wikimedia is using Kafka under the hood with a custom build KafkaSSE connector by the Wikipedia.org team. The SSE client is connected to internal Kafka consumers and exposed via HTTP to external clients. More information on Wikimedia EventStreams architecture can be found [here](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams).
 
 Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.com/cjmatta/kafka-connect-sse)) to stream data into the cluster.
 
+<br>
 
-### Kafka Connect
 ---
 
-* Connector
-* Schema
-* Transforms (optional) used for single message transforms - also used in config format
-* Converter (writes into key value(bytes))
-* Task
-* Modes: Standalone vs. Distrubuted (maybe better choice since fault taulerant)
-* errors.tolerance=all
-* errors.deadletterqueue.topic.name=${bad_kafka_topic_for_inspection_of_bugs}
+### Kafka Connect
+
+* Connector: Custom SSE Connector
+* Converter: Serialization Handlers (writes into key value(bytes))
+* Schema: "Contract" between (data)services
+* Transforms (optional): used for single message transforms (also used in config format)
+
+Define an appropriate schema for endpoint
