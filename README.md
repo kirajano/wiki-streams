@@ -49,6 +49,45 @@ https://stream.wikimedia.org//v2/stream/recentchange
 * length (article lenght: old and new) --> unique to end-point
 * minor change (if it is a minor change) --> unique to end-point
 
+*Sample JSON*
+```
+"$schema":"/mediawiki/recentchange/1.0.0",
+   "meta":{
+      "uri":"https://commons.wikimedia.org/wiki/File:DESERT_SCIMITAR_130430-M-OC922-009.jpg",
+      "request_id":"1b12bec3-c72e-4451-ae23-bc5742c51343",
+      "id":"e195ebcf-e9ff-4179-9591-0d2384b96117",
+      "dt":"2021-08-27T13:20:18Z",
+      "domain":"commons.wikimedia.org",
+      "stream":"mediawiki.recentchange",
+      "topic":"codfw.mediawiki.recentchange",
+      "partition":0,
+      "offset":441362978
+   },
+   "id":1754327016,
+   "type":"edit",
+   "namespace":6,
+   "title":"File:DESERT SCIMITAR 130430-M-OC922-009.jpg",
+   "comment":"add location United States inside Taken On on template",
+   "timestamp":1630070418,
+   "user":"RudolphousBot",
+   "bot":true,
+   "minor":true,
+   "patrolled":true,
+   "length":{
+      "old":1132,
+      "new":1155
+   },
+   "revision":{
+      "old":585514253,
+      "new":586543834
+   },
+   "server_url":"https://commons.wikimedia.org",
+   "server_name":"commons.wikimedia.org",
+   "server_script_path":"/w",
+   "wiki":"commonswiki",
+   "parsedcomment":"add location United States inside Taken On on template"
+```
+
 **Revision Create**:
 https://stream.wikimedia.org//v2/stream/revision-create 
 * Title, URL, Lang Domain, timestamp, user_name, user_is_bot, bot_type(located in user_text), user_comment
@@ -56,6 +95,58 @@ https://stream.wikimedia.org//v2/stream/revision-create
 * user_registration_date
 * user_edit_count
 * rev_content_changed (if content has been chaned during the revision by the user) --> unique to end-point
+
+*Sample JSON*
+```
+{
+   "$schema":"/mediawiki/revision/create/1.1.0",
+   "meta":{
+      "uri":"https://meta.wikimedia.org/wiki/MediaWiki:Centralnotice-Election2021_Board_voting_starts_new_new-vote/ba",
+      "request_id":"18d52d9e-f74a-4076-b5b0-a8679025099d",
+      "id":"d2b4b215-5158-4bb0-aa28-365b6bf94ad4",
+      "dt":"2021-08-27T11:49:49Z",
+      "domain":"meta.wikimedia.org",
+      "stream":"mediawiki.revision-create",
+      "topic":"codfw.mediawiki.revision-create",
+      "partition":0,
+      "offset":269740393
+   },
+   "database":"metawiki",
+   "page_id":11490274,
+   "page_title":"MediaWiki:Centralnotice-Election2021_Board_voting_starts_new_new-vote/ba",
+   "page_namespace":8,
+   "rev_id":21941944,
+   "rev_timestamp":"2021-08-27T11:49:48Z",
+   "rev_sha1":"6fcwahwaz8kd7flbxurwyzbvbcw4kmr",
+   "rev_minor_edit":true,
+   "rev_len":21,
+   "rev_content_model":"wikitext",
+   "rev_content_format":"text/x-wiki",
+   "performer":{
+      "user_text":"DerHexer",
+      "user_groups":[
+         "centralnoticeadmin",
+         "oauthadmin",
+         "oversight",
+         "steward",
+         "sysop",
+         "translationadmin",
+         "*",
+         "user",
+         "autoconfirmed"
+      ],
+      "user_is_bot":false,
+      "user_id":33668,
+      "user_registration_dt":"2006-10-14T10:36:59Z",
+      "user_edit_count":7790
+   },
+   "page_is_redirect":false,
+   "comment":"Protected \"[[MediaWiki:Centralnotice-Election2021 Board voting starts new new-vote/ba]]\": Automatically protected by CentralNotice; please edit only via [[Special:CentralNotice]] or [[Special:Translate]] ([Edit=Allow only central notice administrators] (indefinite) [Move=Allow only central notice administrators] (indefinite)) [cascading]",
+   "parsedcomment":"Protected &quot;<a href=\"/wiki/MediaWiki:Centralnotice-Election2021_Board_voting_starts_new_new-vote/ba\" title=\"MediaWiki:Centralnotice-Election2021 Board voting starts new new-vote/ba\">MediaWiki:Centralnotice-Election2021 Board voting starts new new-vote/ba</a>&quot;: Automatically protected by CentralNotice; please edit only via <a href=\"/wiki/Special:CentralNotice\" title=\"Special:CentralNotice\">Special:CentralNotice</a> or <a href=\"/wiki/Special:Translate\" title=\"Special:Translate\">Special:Translate</a> ([Edit=Allow only central notice administrators] (indefinite) [Move=Allow only central notice administrators] (indefinite)) [cascading]",
+   "rev_parent_id":21941943,
+   "rev_content_changed":false
+}
+```
 
 **Revision Score:** 
 https://stream.wikimedia.org//v2/stream/revision-score
@@ -69,6 +160,70 @@ https://stream.wikimedia.org//v2/stream/revision-score
 -- Music
 -- etc.
 * ML draft_topic (sames as item_topic but flagged as draft) --> unique to end-point
+
+*Sample JSON*
+```
+{
+   "$schema":"/mediawiki/revision/score/2.0.0",
+   "meta":{
+      "stream":"mediawiki.revision-score",
+      "uri":"https://it.wikipedia.org/wiki/Sinfonia_n._3",
+      "request_id":"2a40b30f-7b24-4ce3-8c50-a39ad21070d1",
+      "id":"05727ba0-0736-11ec-a4e8-af04d934395e",
+      "dt":"2021-08-27T12:55:14.266Z",
+      "domain":"it.wikipedia.org",
+      "topic":"codfw.mediawiki.revision-score",
+      "partition":0,
+      "offset":152777675
+   },
+   "database":"itwiki",
+   "page_id":3160677,
+   "page_title":"Sinfonia_n._3",
+   "page_namespace":0,
+   "page_is_redirect":false,
+   "performer":{
+      "user_text":"ValterVB",
+      "user_groups":[
+         "sysop",
+         "*",
+         "user",
+         "autoconfirmed"
+      ],
+      "user_is_bot":false,
+      "user_id":697352,
+      "user_registration_dt":"2011-12-10T18:13:32Z",
+      "user_edit_count":76119
+   },
+   "rev_id":122707501,
+   "rev_parent_id":122046357,
+   "rev_timestamp":"2021-08-27T12:55:10Z",
+   "scores":{
+      "damaging":{
+         "model_name":"damaging",
+         "model_version":"0.5.0",
+         "prediction":[
+            "false"
+         ],
+         "probability":{
+            "false":0.9880401000905714,
+            "true":0.011959899909428638
+         }
+      },
+      "goodfaith":{
+         "model_name":"goodfaith",
+         "model_version":"0.5.0",
+         "prediction":[
+            "true"
+         ],
+         "probability":{
+            "false":0.009194563774685416,
+            "true":0.9908054362253146
+         }
+      }
+   }
+}
+```
+
 
 <br>*(NOT USEFUL FOR NOW)*
 
@@ -168,4 +323,18 @@ Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.co
 * Schema: "Contract" between (data)services
 * Transforms (optional): used for single message transforms (also used in config format)
 
+Notes:
+
 Define an appropriate schema for endpoint
+
+Schema Registry
+
+How to define a schema for our case
+
+Run through the tutorial
+
+Steps:
+
+Apply transformers
+
+Schema cleanup and setup
