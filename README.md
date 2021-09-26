@@ -338,3 +338,5 @@ Steps:
 Apply transformers
 
 Schema cleanup and setup
+
+Clarify the use of schema registry
