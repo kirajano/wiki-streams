@@ -340,3 +340,5 @@ Apply transformers
 Schema cleanup and setup
 
 Clarify the use of schema registry
+
+Missing fields: bot, id, length, minor, namespace, patrolled, revision, server_name, script_path, server_url, timestamp, title, type, user, wiki 

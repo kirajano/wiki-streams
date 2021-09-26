@@ -162,7 +162,6 @@ services:
       - bash
       - -c 
       - |
-        echo "Waiting one minute for Kafka brokers to start and 
-               necessary topics to be available"
+        echo "Waiting one minute for Kafka brokers to start"
         sleep 60  
         /etc/confluent/docker/run
