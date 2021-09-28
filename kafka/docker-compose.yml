@@ -34,6 +34,7 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     volumes: 
       - ./data/container_data/kafka-data:/var/lib/kafka/data
+      - ./config/broker:/etc/kafka
 
   schema-registry:
     image: confluentinc/cp-schema-registry:6.1.0
@@ -103,6 +104,7 @@ services:
       CONNECT_CONFIG_PROVIDERS_FILE_CLASS: 'org.apache.kafka.common.config.provider.FileConfigProvider'
     volumes:
       - ./data:/data
+      - ./data/file_consumer:/home/appuser/file-sinc
     command: 
       # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
       - bash 

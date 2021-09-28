@@ -341,4 +341,7 @@ Schema cleanup and setup
 
 Clarify the use of schema registry
 
-Missing fields: bot, id, length, minor, namespace, patrolled, revision, server_name, script_path, server_url, timestamp, title, type, user, wiki 
+Missing fields: bot, id, length, minor, namespace, patrolled, revision, server_name, script_path, server_url, timestamp, title, type, user, wiki
+
+Check where are logs --> Could not configure
+Try another connector, Remove fromJSON and try KSQL approach, https://aseigneurin.github.io/2018/08/02/kafka-tutorial-4-avro-and-schema-registry.html
