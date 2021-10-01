@@ -339,9 +339,27 @@ To-DO:
 * clean-up schema for unused fields
 * setup other topics
 * start KSQL
+  * Filter out only EN wiki events
   * JOIN between endpoints
     * Try unique: meta.id or meta.request_id
     * Try common: uri, id-page_id?
 * add job for categories
 * (clean up setup: unused topics etc.)
 * (check metrics for broker activation)
+
+
+Monday
+1: KSQL testing to output into files-sinks until arrive at correct data structure
+2: Study Elastic Search and Docker, and working examples
+
+Tuesday
+1: Start implementing ES and Kibana with Docker --> (possible time with Daniel)
+2: Debugging visuals --> (possible time with Daniel)
+
+Wednesday
+1: Add job for category fetching with py --> (possible time with Daniel)
+2: Clean up Kafka configs and revamp if needed --> (possible time with Daniel)
+
+
+WORST CASE SCENARIO IF NOT AT FINISH LINE:
+Presentation is going to be about the topic, train of though and future work.
