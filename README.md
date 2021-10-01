@@ -331,7 +331,7 @@ Make checks if topics are ariving via a kafka-consloe-consumer.
 
 Or testing via a file sync by adding *file_output_connector* and viewing file with real-time changes.
 
-`tail -n /file/path`
+`tail -n kafka/data/file_consumer/test.sink.txt`
 
 To-DO:
 * test file sync
@@ -339,6 +339,9 @@ To-DO:
 * clean-up schema for unused fields
 * setup other topics
 * start KSQL
+  * JOIN between endpoints
+    * Try unique: meta.id or meta.request_id
+    * Try common: uri, id-page_id?
 * add job for categories
 * (clean up setup: unused topics etc.)
 * (check metrics for broker activation)
