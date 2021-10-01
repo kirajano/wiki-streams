@@ -132,3 +132,8 @@ dmypy.json
 kafka/data/*
 kafka/kafka_connect_test
 kafka/cp_demo_wiki/*
+kafka/config/*
+
+# presentation
+presentation.pptx
+~$presentation.pptx

@@ -323,25 +323,22 @@ Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.co
 * Schema: "Contract" between (data)services
 * Transforms (optional): used for single message transforms (also used in config format)
 
-Notes:
 
-Define an appropriate schema for endpoint
+### Test Incoming topics
 
-Schema Registry
+Make checks if topics are ariving via a kafka-consloe-consumer.
+`kafka-console-consumer --topic wikipedia_stream --bootstrap-server broker:29092 --max-messages 10 --from-beginning`
 
-How to define a schema for our case
+Or testing via a file sync by adding *file_output_connector* and viewing file with real-time changes.
 
-Run through the tutorial
+`tail -n /file/path`
 
-Steps:
-
-Apply transformers
-
-Schema cleanup and setup
-
-Clarify the use of schema registry
-
-Missing fields: bot, id, length, minor, namespace, patrolled, revision, server_name, script_path, server_url, timestamp, title, type, user, wiki
-
-Check where are logs --> Could not configure
-Try another connector, Remove fromJSON and try KSQL approach, https://aseigneurin.github.io/2018/08/02/kafka-tutorial-4-avro-and-schema-registry.html
+To-DO:
+* test file sync
+* test cli sync
+* clean-up schema for unused fields
+* setup other topics
+* start KSQL
+* add job for categories
+* (clean up setup: unused topics etc.)
+* (check metrics for broker activation)
