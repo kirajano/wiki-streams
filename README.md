@@ -352,6 +352,12 @@ CREATE STREAM recentchange
       KAFKA_TOPIC='wiki_recentchange',
       VALUE_FORMAT ='AVRO'
 );
+
+CREATE STREAM revisionscore
+   WITH (
+      KAFKA_TOPIC='wiki_revisionscore',
+      VALUE_FORMAT='AVRO'
+   );
 ```
 
 Setup a cleaned stream for only DE and EN Wiki entries. (More could be added)
