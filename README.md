@@ -279,6 +279,14 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 * ML content quality: damage, goodfaith (RSC)
 
 
+**Possible Visuals**
+
+- How many bots crated content?
+- What is the change type?
+- What topics are being more goodfaith / damaging?
+  - How many?
+  - Geographically?
+
 <br>**Possible Inclusion**
 
 * user_group(bot,editor, others; many groups and no info what they mean) (RVCR, RSC)
@@ -333,13 +341,63 @@ Or testing via a file sync by adding *file_output_connector* and viewing file wi
 
 `tail -n kafka/data/file_consumer/test.sink.txt`
 
+
+### TRANSFORM with KSQL
+
+Setup a querable stream for both endpoints. The stream definition automatically overtakes all fields in the schema.
+
+```
+CREATE STREAM recentchange
+   WITH (
+      KAFKA_TOPIC='wiki_recentchange',
+      VALUE_FORMAT ='AVRO'
+);
+```
+
+Setup a cleaned stream for only DE and EN Wiki entries. (More could be added)
+
+```
+CREATE STREAM recentchange_en_de
+   WITH (
+      TIMESTAMP = 'timestamp'
+)
+AS SELECT
+   meta->id as meta_id,
+   meta->request_id as meta_request_id,
+   meta->uri as URI,
+   meta->dt as meta_timestamp,
+   meta->domain as meta_domain,
+   id,
+   user,
+   type,
+   bot,
+   title,
+   comment,
+   timestamp,
+   minor,
+   patrolled,
+   length->old as lenght_old,
+   length->new as length_new,
+   revision->old as revision_old,
+   revision->new as revision_new,
+   server_url,
+   server_name,
+   wiki
+FROM  RECENTCHANGE 
+WHERE server_name = 'en.wikipedia.org' OR server_name = 'de.wikipedia.org'
+PARTITION BY user
+EMIT CHANGES;
+```
+
+## ONGOING
+
 To-DO:
 * test file sync
 * test cli sync
 * clean-up schema for unused fields
 * setup other topics
 * start KSQL
-  * Filter out only EN wiki events
+  * Filter out only EN / DE wiki events
   * JOIN between endpoints
     * Try unique: meta.id or meta.request_id
     * Try common: uri, id-page_id?

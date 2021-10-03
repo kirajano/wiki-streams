@@ -34,7 +34,7 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     volumes: 
       - ./data/container_data/kafka-data:/var/lib/kafka/data
-      - ./config/broker:/etc/kafka
+      #- ./config/broker:/etc/kafka
 
   schema-registry:
     image: confluentinc/cp-schema-registry:6.1.0
