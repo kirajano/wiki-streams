@@ -282,8 +282,14 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 
 **Possible Visuals**
 
-- How many bots crated content?
+Plan Min:
+- How many bots crated content? DONE (en and de)
+- Extend above to all regions and visualize on the map
+- Categories of articles that being changed
 - What is the change type?
+- Length change?
+
+Plan Max:
 - What topics are being more goodfaith / damaging?
   - How many?
   - Geographically?
@@ -392,7 +398,6 @@ AS SELECT
    wiki
 FROM  RECENTCHANGE 
 WHERE server_name = 'en.wikipedia.org' OR server_name = 'de.wikipedia.org'
-PARTITION BY user
 EMIT CHANGES;
 ```
 
