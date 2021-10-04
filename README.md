@@ -11,6 +11,7 @@ This real-time data could be used to create a service that reports on:
 * Language locales where damaging content is the highest
 * Topics that are prone to falsehood from the outside world
 * etc...
+  https://www.mediawiki.org/wiki/ORES/sv
 
 ### Output
 A Dashboard or REST Service that is available to be used for returning stats on various params.

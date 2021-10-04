@@ -1,0 +1,203 @@
+{
+    "title": "mediawiki/revision/score",
+    "description": "Represents a MW Revision Score event (from ORES).",
+    "$id": "/mediawiki/revision/score/2.0.0",
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "required": [
+      "$schema",
+      "meta",
+      "rev_id",
+      "rev_timestamp",
+      "scores"
+    ],
+    "properties": {
+      "$schema": {
+        "type": "string",
+        "description": "A URI identifying the JSONSchema for this event. This should match an schema's $id in a schema repository. E.g. /schema_name/1.0.0\n"
+      },
+      "meta": {
+        "type": "object",
+        "required": [
+          "id",
+          "dt",
+          "stream"
+        ],
+        "properties": {
+          "uri": {
+            "type": "string",
+            "format": "uri-reference",
+            "maxLength": 8192,
+            "description": "Unique URI identifying the event or entity"
+          },
+          "request_id": {
+            "type": "string",
+            "description": "Unique ID of the request that caused the event"
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{8}(-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}$",
+            "maxLength": 36,
+            "description": "Unique ID of this event"
+          },
+          "dt": {
+            "type": "string",
+            "format": "date-time",
+            "maxLength": 128,
+            "description": "Event datetime, in ISO-8601 format"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Domain the event or entity pertains to",
+            "minLength": 1
+          },
+          "stream": {
+            "type": "string",
+            "description": "Name of the stream/queue/dataset that this event belongs in",
+            "minLength": 1
+          }
+        }
+      },
+      "performer": {
+        "description": "Represents the user that performed this change.",
+        "type": "object",
+        "required": [
+          "user_text",
+          "user_groups",
+          "user_is_bot"
+        ],
+        "properties": {
+          "user_id": {
+            "description": "The user id that performed this change.  This is optional, and will not be present for anonymous users.\n",
+            "type": "integer"
+          },
+          "user_text": {
+            "description": "The text representation of the user that performed this change.",
+            "type": "string",
+            "minLength": 1
+          },
+          "user_groups": {
+            "description": "A list of the groups this user belongs to.  E.g. bot, sysop etc.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "user_is_bot": {
+            "description": "True if this user is considered to be a bot at the time of this event. This is checked via the $user->isBot() method, which considers both user_groups and user permissions.\n",
+            "type": "boolean"
+          },
+          "user_registration_dt": {
+            "description": "The datetime of the user account registration. Not present for anonymous users or if missing in the MW database.\n",
+            "type": "string",
+            "format": "date-time",
+            "maxLength": 128
+          },
+          "user_edit_count": {
+            "description": "The number of edits this user has made at the time of this event. Not present for anonymous users.\n",
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "rev_id": {
+        "description": "The (database) revision ID.",
+        "type": "integer",
+        "minimum": 0
+      },
+      "rev_parent_id": {
+        "description": "The parent revison ID of the revision that this event represents.",
+        "type": "integer",
+        "minimum": 0
+      },
+      "rev_timestamp": {
+        "description": "The revision's creation time in ISO8601 format.  This field does not end in '_dt' to better match the field name on the Mediawiki revision table.\n",
+        "type": "string",
+        "format": "date-time",
+        "maxLength": 128
+      },
+      "scores": {
+        "description": "List of ORES score objects. Each model uses the model name as a map key and was used to score this revision.  Example: {\n  \"awesomeness\": {\n    \"model_name\": \"awesomeness\"\n    \"model_version\": \"1.0.1\",\n    \"prediction\": [\"yes\", \"mostly\"],\n    \"probability\": {\n      \"yes\": 0.99,\n      \"mostly\": 0.90,\n      \"hardly\": 0.01\n    }\n  }\n}\n",
+        "type": "object",
+        "required": [
+            "damaging",
+            "goodfaith"
+            ],
+        "properties": {
+            "damaging": {
+                "description": "Model measuring damaging content",
+                "type": "object",
+                "properties": {
+                  "model_name": {
+                    "description": "Name of model",
+                    "type": "string"
+                  },
+                  "model_version": {
+                    "description": "Version of model",
+                    "type": "string"
+                  },
+                  "prediction": {
+                    "description": "Prediciton of damaging content",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "probability": {
+                    "description": "Probability of damaging content",
+                    "type": "object",
+                    "properties": {
+                      "false": {
+                        "description": "Probability of false",
+                        "type": "number"
+                      },
+                      "true": {
+                        "description": "Probability of true",
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+            },
+            "goodfaith": {
+              "description": "Model measuring damaging content",
+              "type": "object",
+              "properties": {
+                "model_name": {
+                  "description": "Name of model",
+                  "type": "string"
+                },
+                "model_version": {
+                  "description": "Version of model",
+                  "type": "string"
+                },
+                "prediction": {
+                  "description": "Prediciton of goodfaith content",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "probability": {
+                  "description": "Probability of goodfaith content",
+                  "type": "object",
+                  "properties": {
+                    "false": {
+                      "description": "Probability of false",
+                      "type": "number"
+                    },
+                    "true": {
+                      "description": "Probability of true",
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+          }
+        }
+      }
+    }
+  }
