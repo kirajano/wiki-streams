@@ -432,6 +432,7 @@ AS SELECT
    SUBSTRING(wiki,1,2) as geo
 FROM  RECENTCHANGE
 WHERE server_name NOT IN ('www.wikidata.org', 'commons.wikimedia.org', 'wikimania.wikimedia.org')
+   AND SUBSTRING(wiki,1,2) IN ('de', 'en', 'ru', 'fr', 'it', 'es', 'pt', 'fi', 'lt', 'nl')
 EMIT CHANGES;
 ```
 
