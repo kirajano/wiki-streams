@@ -368,7 +368,7 @@ CREATE STREAM revisionscore
    );
 ```
 
-Setup a cleaned stream for only DE and EN Wiki entries. (More could be added)
+Setup a cleaned stream for only DE and EN Wiki entries. This will be used for the "Wiki Bot Analytics" Dashboard.
 
 ```
 CREATE STREAM recentchange_en_de
@@ -401,6 +401,40 @@ FROM  RECENTCHANGE
 WHERE server_name = 'en.wikipedia.org' OR server_name = 'de.wikipedia.org'
 EMIT CHANGES;
 ```
+
+Setup a stream for geo regions according to 'ISO 3166-1 alpha-2':
+```
+CREATE STREAM recentchange_geo
+   WITH (
+      TIMESTAMP = 'timestamp'
+)
+AS SELECT
+   meta->id as meta_id,
+   meta->request_id as meta_request_id,
+   meta->uri as URI,
+   meta->dt as meta_timestamp,
+   meta->domain as meta_domain,
+   id,
+   user,
+   type,
+   bot,
+   title,
+   comment,
+   timestamp,
+   minor,
+   patrolled,
+   length->old as lenght_old,
+   length->new as length_new,
+   revision->old as revision_old,
+   revision->new as revision_new,
+   server_url,
+   server_name,
+   SUBSTRING(wiki,1,2) as geo
+FROM  RECENTCHANGE
+WHERE server_name NOT IN ('www.wikidata.org', 'commons.wikimedia.org', 'wikimania.wikimedia.org')
+EMIT CHANGES;
+```
+
 
 ## ONGOING
 
