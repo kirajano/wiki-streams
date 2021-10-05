@@ -111,6 +111,8 @@ services:
       - -c 
       - |
         echo "Installing connector plugins"
+        confluent-hub install --no-prompt redhatinsights/expandjsonsmt:0.0.7
+        confluent-hub install --no-prompt confluentinc/kafka-connect-json-schema-converter:6.2.1
         confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.2
         confluent-hub install --no-prompt jcustenborder/kafka-connect-json-schema:latest
         confluent-hub install --no-prompt cjmatta/kafka-connect-sse:1.0
@@ -179,6 +181,7 @@ services:
       ES_JAVA_OPTS: "-Xms1g -Xmx1g"
       discovery.type: "single-node"
       node.store.allow_mmap: "false"
+    # Mounted for prebuild dashboards  
     volumes: 
       - ./data/container_data/elasticsearch:/usr/share/elasticsearch/data
 

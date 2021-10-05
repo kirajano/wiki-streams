@@ -286,6 +286,7 @@ Plan Min:
 - How many bots crated content? DONE (en and de)
 - Extend above to all regions and visualize on the map
 - Categories of articles that being changed
+- Cloud of user comments?
 - What is the change type?
 - Length change?
 
