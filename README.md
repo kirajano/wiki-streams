@@ -348,10 +348,10 @@ Or testing via a file sync by adding *file_output_connector* and viewing file wi
 
 ### Transform Revision Score Endpoint
 
-Although though for the endpoint the schema has been also provided like for *recentchange*, after many attempts of parsing JSON with existing transforms yielded no results. The content of the "scores" field, which contains information on Wikipedia's intent classification is *open content* JSON and has no fixed schema noted with "additionalParameter" in the master schema. The solution is to transform the incoming messages with kafkacat and define a seperate schema. By doing that, this will enforce a fixed structure on the incoming messages. The connector used for getting data is SSE with with a value converter of String.
+Although though for the endpoint the schema has been also provided like for *recentchange*, after many attempts of parsing JSON with existing transforms yielded no results. The content of the "scores" field, which contains information on Wikipedia's intent classification is *open content* JSON and has no fixed schema noted with "additionalParameter" in the master schema. The solution is to transform the incoming messages with kafkacat and define a seperate schema. By doing that, this will enforce a fixed structure on the incoming messages. The connector used for getting data is SSE with with a value converter of string before passing to kafkacat and doing the cleanup with jq.
 
 ```
-kafkacat -C -b localhost:9092 -t wiki_revisionscore | jq 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, domain: .meta.domain, id: .meta.id, request_id: .meta.request_id, wiki: .database, page_id: .page_id, page_title: .page_title, bot: .performer.user_is_bot, user_id: .performer.user_id, user_registration_date: .performer.user_registration_dt, user_edit_count: .performer.user_edit_count, damaging_intent: .scores.damaging, goodfaith_intent: .scores.goodfaith}'
+kafkacat -C -b localhost:9092 -t wiki_revisionscore_raw | jq 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, domain: .meta.domain, id: .meta.id, request_id: .meta.request_id, wiki: .database, page_id: .page_id, page_title: .page_title, bot: .performer.user_is_bot, user_id: .performer.user_id, user_registration_date: .performer.user_registration_dt, user_edit_count: .performer.user_edit_count, damaging_intent: .scores.damaging, goodfaith_intent: .scores.goodfaith}' | kafkacat -P -b localhost:9092 -t wiki_revisionscore
 ```
 
 ### TRANSFORM with KSQL
@@ -406,7 +406,7 @@ WHERE server_name = 'en.wikipedia.org' OR server_name = 'de.wikipedia.org'
 EMIT CHANGES;
 ```
 
-Setup a stream for geo regions according to 'ISO 3166-1 alpha-2':
+Setup a stream for geo regions according to 'ISO 3166-1 alpha-2'. It is not possible to map countries to languages and hence the map visualisation does not make a lot of sense. Nevertheless, some countires were mapped for demo purposes to provide insights ('en' is mapped to 'US' - sorry UK):
 ```
 CREATE STREAM recentchange_geo
    WITH (
