@@ -255,10 +255,6 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 *Links to same topic:*
 * Dahsboard of streaming events https://esjewett.github.io/wm-eventsource-demo/
 
-*Notes from Daniel:*
-* DBPedia for categories
-* Check the throughput to see if Streaming is necessary
-
 ---
 ### DATA SCOPE DEFINITION
 ---
@@ -283,8 +279,8 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 **Possible Visuals**
 
 Plan Min:
-- How many bots crated content? DONE (en and de)
-- Extend above to all regions and visualize on the map
+- How many bots crated content (en and de)? DONE 
+- Extend above to all regions and visualize on the map DONE
 - Categories of articles that being changed
 - Cloud of user comments?
 - What is the change type?
@@ -349,6 +345,15 @@ Or testing via a file sync by adding *file_output_connector* and viewing file wi
 
 `tail -n kafka/data/file_consumer/test.sink.txt`
 
+
+### Transform Revision Score Endpoint
+
+Although though for the endpoint the schema has been also provided like for *recentchange*, after many attempts of parsing JSON with existing transforms yielded no results. The content of the "scores" field, which contains information on Wikipedia's intent classification is *open content* JSON and has no fixed schema noted with "additionalParameter" in the master schema. The solution is to transform the incoming messages with kafkacat and define a seperate schema. By doing that, this will enforce a fixed structure on the incoming messages. The connector used for getting data is SSE with with a value converter of String.
+
+```
+kafkacat -C -b localhost:9092 -t wiki_revisionscore | jq 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, domain: .meta.domain, id: .meta.id, request_id: .meta.request_id, wiki: .database, page_id: .page_id, page_title: .page_title, bot: .performer.user_is_bot, user_id: .performer.user_id, user_registration_date: .performer.user_registration_dt, user_edit_count: .performer.user_edit_count, damaging_intent: .scores.damaging, goodfaith_intent: .scores.goo
+dfaith}'
+```
 
 ### TRANSFORM with KSQL
 
@@ -429,10 +434,22 @@ AS SELECT
    revision->new as revision_new,
    server_url,
    server_name,
-   SUBSTRING(wiki,1,2) as geo
+   CASE WHEN UCASE(SUBSTRING(wiki,1,2)) like 'EN' THEN 'US'
+   	WHEN UCASE(SUBSTRING(wiki,1,2)) like 'KY' THEN 'KG'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'JA' THEN 'JP'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'VI' THEN 'VN'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'KO' THEN 'KR'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'ZH' THEN 'CN'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'SV' THEN 'SE'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'ET' THEN 'EE'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'CS' THEN 'CZ'
+      WHEN UCASE(SUBSTRING(wiki,1,2)) like 'DA' THEN 'DK'
+   	ELSE UCASE(SUBSTRING(wiki,1,2))
+    END
+   	as geo
 FROM  RECENTCHANGE
 WHERE server_name NOT IN ('www.wikidata.org', 'commons.wikimedia.org', 'wikimania.wikimedia.org')
-   AND SUBSTRING(wiki,1,2) IN ('de', 'en', 'ru', 'fr', 'it', 'es', 'pt', 'fi', 'lt', 'nl')
+   AND SUBSTRING(wiki,1,2) IN ('de', 'en', 'ru', 'fr', 'it', 'es', 'pt', 'fi', 'lt', 'nl', 'hu', 'pl', 'ky', 'ja', 'vi', 'th', 'tr', 'ko', 'zh', 'sv', 'no', 'lv', 'et', 'cs', 'ro', 'bg', 'sk', 'da')
 EMIT CHANGES;
 ```
 
