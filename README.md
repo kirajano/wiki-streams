@@ -382,6 +382,50 @@ CREATE STREAM revisionscore
    );
 ```
 
+Setup revision score query:
+
+```
+CREATE STREAM revisionscore_all(
+	uri VARCHAR,
+	domain VARCHAR,
+	id VARCHAR,
+	request_id VARCHAR,
+	wiki VARCHAR,
+	page_id int,
+	page_title VARCHAR,
+	bot BOOLEAN,
+	user_id int,
+	user_registration_date TIMESTAMP,
+	user_edit_count int,
+	damaging_intent STRUCT<model_name VARCHAR,
+		prediction ARRAY,
+		probability STRUCT<
+			'true' DOUBLE,
+			'false' DOUBLE>
+		>,
+	goodfaith_intent STRUCT<model_name VARCHAR,
+		prediction ARRAY,
+		probability STRUCT<
+			'true' DOUBLE,
+			'false' DOUBLE>
+		>)
+WITH (
+	KAFKA_TOPIC='wiki_revisionscore',
+	VALUE_FORMAT='JSON');
+
+CREATE STREAM change_intent AS 
+SELECT  
+	wiki,
+	page_title,
+    bot,
+    CASE WHEN damaging_intent->prediction = '[true]' THEN 'Damaging'
+    	WHEN goodfaith_intent->prediction = '[true]' THEN 'Goodfaith'
+    ELSE null
+    END as Intent
+FROM  REVISIONSCORE_ALL_1 EMIT CHANGES;
+```
+
+
 Setup a cleaned stream for only DE and EN Wiki entries. This will be used for the "Wiki Bot Analytics" Dashboard.
 
 ```
