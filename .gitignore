@@ -137,3 +137,4 @@ kafka/config/*
 # presentation
 presentation.pptx
 ~$presentation.pptx
+*.docx
