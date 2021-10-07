@@ -183,7 +183,7 @@ services:
       node.store.allow_mmap: "false"
     # Mounted for prebuild dashboards  
     volumes: 
-      - ./data/container_data/elasticsearch:/usr/share/elasticsearch/data
+      - ./data/elk/elasticsearch:/usr/share/elasticsearch/data
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.11.0
