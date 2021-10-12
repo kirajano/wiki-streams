@@ -19,6 +19,12 @@ Dashboard with real-time updates of events on Wikipedia.
 ![img](screenshots/bot_analytics.PNG)
 ![img](screenshots/bot_activity_map.PNG)
 
+
+### Start
+The application is a `docker-compose` and can be initialized simply with `docker-compose up -d`. The below information describes in detail the single steps taken to build the pipeline. The application essentially sources event data, process them in real-time and pushes out to ElasticSearch. The index is created rather seamlessly thanks to structured data coming out of Kafka.
+
+A single `start.sh` script to ran as one-liner is to be added in the next step.
+
 ### Sources
 Wikimedia Data Stream
 https://stream.wikimedia.org/?doc#/streams
@@ -275,8 +281,6 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 * ML content quality: damage, goodfaith (RSC)
 
 
-
----
 #### Observation
 ---
 
@@ -284,18 +288,9 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 * Revision Create (RSC) and Recentchange share the timestamp
 * "request_id" can be used for matching
 
----
-### Architecture
----
 
-1. Batch Stream
-<p> Stream is opened up for a <u>defined</u> time. The opening is happening different for RC endpoint and RV endpoints. RC is usually ahead (assumed). The sync term between end points will be dubbed as "catch-up". There are two options to approach "catch-up". First, start RC before RV. Second is start both parallel but have different times - RV should be longer. Which is option is based, is not known.</p>
-
-2. Real Stream
-Using local Kafka connect.
-
----
 ### Wikipedia EventStreams Architecture
+---
 Wikimedia is using Kafka under the hood with a custom build KafkaSSE connector by the Wikipedia.org team. The SSE client is connected to internal Kafka consumers and exposed via HTTP to external clients. More information on Wikimedia EventStreams architecture can be found [here](https://wikitech.wikimedia.org/wiki/Event_Platform/EventStreams).
 
 Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.com/cjmatta/kafka-connect-sse)) to stream data into the cluster.
@@ -307,10 +302,19 @@ Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.co
 ### Kafka Connect
 
 * Connector: Custom SSE Connector
-* Converter: Serialization Handlers (writes into key value(bytes))
+* Converter: (AVRO) Serialization Handlers (writes into key value(bytes))
 * Schema: "Contract" between (data)services
-* Transforms (optional): used for single message transforms (also used in config format)
+* Transforms: extracting payload from "data" field (also used in config format)
 
+
+Schema Compatibility needs to be (likely) FUll. Check what it is currently:
+```
+curl -s localhost:8081/config
+```
+If not FULL, then change:
+```
+curl -X PUT -H "application/json" -s localhost:8081/config --data '{"compatibilityLevel": "FULL"}'
+```
 
 ### Test Incoming topics
 
@@ -326,17 +330,10 @@ Or testing via a file sync by adding *file_output_connector* and viewing file wi
 
 Although though for the endpoint the schema has been also provided like for *recentchange*, after many attempts of parsing JSON with existing transforms yielded no results. The content of the "scores" field, which contains information on Wikipedia's intent classification is *open content* JSON and has no fixed schema noted with "additionalParameter" in the master schema. The solution is to transform the incoming messages with kafkacat and define a seperate schema. By doing that, this will enforce a fixed structure on the incoming messages. The connector used for getting data is SSE with with a value converter of string before passing to kafkacat and doing the cleanup with jq.
 
+![img](screenshots/revision_score_workaround.png)
+
 ```
 kafkacat -C -b localhost:9092 -t wiki_revisionscore_raw -u | jq -c 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, domain: .meta.domain, id: .meta.id, request_id: .meta.request_id, wiki: .database, page_id: .page_id, page_title: .page_title, bot: .performer.user_is_bot, user_id: .performer.user_id, user_registration_date: .performer.user_registration_dt, user_edit_count: .performer.user_edit_count, damaging_intent: .scores.damaging, goodfaith_intent: .scores.goodfaith}' | kafkacat -P -b localhost:9092 -t wiki_revisionscore
-```
-
-Schema Compatibility needs to be (likely) FUll. Check what it is currently:
-```
-curl -s localhost:8081/config
-```
-If not FULL, then change:
-```
-curl -X PUT -H "application/json" -s localhost:8081/config --data '{"compatibilityLevel": "FULL"}'
 ```
 
 
@@ -483,35 +480,4 @@ EMIT CHANGES;
 ```
 
 
-## ONGOING
-
-To-DO:
-* test file sync
-* test cli sync
-* clean-up schema for unused fields
-* setup other topics
-* start KSQL
-  * Filter out only EN / DE wiki events
-  * JOIN between endpoints
-    * Try unique: meta.id or meta.request_id
-    * Try common: uri, id-page_id?
-* add job for categories
-* (clean up setup: unused topics etc.)
-* (check metrics for broker activation)
-
-
-Monday
-1: KSQL testing to output into files-sinks until arrive at correct data structure
-2: Study Elastic Search and Docker, and working examples
-
-Tuesday
-1: Start implementing ES and Kibana with Docker --> (possible time with Daniel)
-2: Debugging visuals --> (possible time with Daniel)
-
-Wednesday
-1: Add job for category fetching with py --> (possible time with Daniel)
-2: Clean up Kafka configs and revamp if needed --> (possible time with Daniel)
-
-
-WORST CASE SCENARIO IF NOT AT FINISH LINE:
-Presentation is going to be about the topic, train of though and future work.
+**More stuff, improvements and data enrichment is coming up**
