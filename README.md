@@ -1,10 +1,11 @@
-## Wikipedia Event Streaming
+## Wikipedia Event Streaming with Kafka
 
 ### Purpose
-Use the Wikipeda data stream to address what is happening in Wikipedia and potential of fraudelent / damaging content. Identify topics and domains that are mostly susceptible.
+Use the MediaWiki Event Stream API to run real-time analyitcs using Kafka + Elastic Stack.
 
 ### Description
-Track fraudelent (and bot) created content on Wikipedia in real-time.
+Track bot acitity created content on Wikipedia in real-time.
+Utilizig ORES ML services, track how Wikipedia tracks potential of quality damaging edits to existing artictles. Attemt to identify topics and domains that are mostly susceptible.
 Wikipedia implements a real-time ML revision algo to understand if changes are damaging or goodfaith.
 This real-time data could be used to create a service that reports on: 
 * Share of damaging vs. non-damaging content
@@ -14,7 +15,9 @@ This real-time data could be used to create a service that reports on:
   https://www.mediawiki.org/wiki/ORES/sv
 
 ### Output
-A Dashboard or REST Service that is available to be used for returning stats on various params.
+Dashboard with real-time updates of events on Wikipedia.
+![img](screenshots/bot_analytics.PNG)
+![img](screenshots/bot_activity_map.PNG)
 
 ### Sources
 Wikimedia Data Stream
