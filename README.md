@@ -26,7 +26,7 @@ https://stream.wikimedia.org/?doc#/streams
 
 ### Stack
 * Streaming --> Kafka (TBD Kinesis)
-* Scripting --> Bash
+* Scripting --> Bash, Kafkacat
 * Reproducability --> Docker
   
 For data injection on the fly (TBD):
@@ -40,7 +40,7 @@ For data injection on the fly (TBD):
 
 ### Pipeline & Data per Endpoint
 ---
-![img](screenshots/pipeline.PNG)
+![img](screenshots/Pipeline.PNG)
 
 
 
