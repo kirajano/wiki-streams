@@ -129,5 +129,13 @@ dmypy.json
 .pyre/
 
 # kakfa
-kafka/data/*
-kafka/kafka_connect_test
+data/*
+other_repos/*
+
+# presentation
+presentation.pptx
+~$presentation.pptx
+*.docx
+
+# backup readme
+README_working_notes.md

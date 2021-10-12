@@ -7,9 +7,9 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-    volumes: 
-      - ./data/container_data/zk-data:/var/lib/zookeeper/data
-      - ./data/container_data/zk-txn-logs:/var/lib/zookeeper/log
+    #volumes: 
+    #  - ./data/container_data/zk-data:/var/lib/zookeeper/data
+    #  - ./data/container_data/zk-txn-logs:/var/lib/zookeeper/log
 
   broker:
     image: confluentinc/cp-kafka:6.1.0
@@ -32,8 +32,9 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-    volumes: 
-      - ./data/container_data/kafka-data:/var/lib/kafka/data
+#    volumes: 
+      #- ./data/container_data/kafka-data:/var/lib/kafka/data
+      #- ./config/broker:/etc/kafka
 
   schema-registry:
     image: confluentinc/cp-schema-registry:6.1.0
@@ -103,12 +104,17 @@ services:
       CONNECT_CONFIG_PROVIDERS_FILE_CLASS: 'org.apache.kafka.common.config.provider.FileConfigProvider'
     volumes:
       - ./data:/data
+      - ./data/file_consumer:/home/appuser/file-sinc
     command: 
       # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
       - bash 
       - -c 
       - |
         echo "Installing connector plugins"
+        confluent-hub install --no-prompt redhatinsights/expandjsonsmt:0.0.7
+        confluent-hub install --no-prompt confluentinc/kafka-connect-json-schema-converter:6.2.1
+        confluent-hub install --no-prompt confluentinc/kafka-connect-elasticsearch:11.1.2
+        confluent-hub install --no-prompt jcustenborder/kafka-connect-json-schema:latest
         confluent-hub install --no-prompt cjmatta/kafka-connect-sse:1.0
         confluent-hub install --no-prompt castorm/kafka-connect-http:0.8.6
         confluent-hub install --no-prompt confluentinc/kafka-connect-http:1.5.0
@@ -161,7 +167,33 @@ services:
       - bash
       - -c 
       - |
-        echo "Waiting one minute for Kafka brokers to start and 
-               necessary topics to be available"
+        echo "Waiting one minute for Kafka brokers to start"
         sleep 60  
         /etc/confluent/docker/run
+  
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+    environment:
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+      discovery.type: "single-node"
+      node.store.allow_mmap: "false"
+    # Mounted for prebuild dashboards  
+    volumes: 
+      - ./data/ek/elasticsearch:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.11.0
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    environment:
+      xpack.security.enabled: "false"
+      xpack.license.self_generated.type: "trial"
+      discovery.type: "single-node"
+      server.cors.enabled: "true"
