@@ -23,6 +23,8 @@ Dashboard with real-time updates of events on Wikipedia.
 ## Start
 The application is a `docker-compose` and can be initialized simply with `docker-compose up -d`. The below information describes in detail the single steps taken to build the pipeline. The application essentially sources event data, process them in real-time and pushes out to ElasticSearch. The index is created rather seamlessly thanks to structured data coming out of Kafka.
 
+The *requirements file* is not necessary but contains an optional package `sample` for test streaming things on the command line. This helps with understanding the data and do some analysis.
+
 A single `start.sh` script to ran as one-liner is to be added in the next step.
 
 ## Sources
@@ -328,7 +330,7 @@ Or testing via a file sync by adding *file_output_connector* and viewing file wi
 
 Although though for the endpoint the schema has been also provided like for *recentchange*, after many attempts of parsing JSON with existing transforms yielded no results. The content of the "scores" field, which contains information on Wikipedia's intent classification is *open content* JSON and has no fixed schema noted with "additionalParameter" in the master schema. The solution is to transform the incoming messages with kafkacat and define a seperate schema. By doing that, this will enforce a fixed structure on the incoming messages. The connector used for getting data is SSE with with a value converter of string before passing to kafkacat and doing the cleanup with jq.
 
-![img](screenshots/revision_score_workaround.png)
+![img](screenshots/revision_score_workaround.PNG)
 
 ```
 kafkacat -C -b localhost:9092 -t wiki_revisionscore_raw -u | jq -c 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, domain: .meta.domain, id: .meta.id, request_id: .meta.request_id, wiki: .database, page_id: .page_id, page_title: .page_title, bot: .performer.user_is_bot, user_id: .performer.user_id, user_registration_date: .performer.user_registration_dt, user_edit_count: .performer.user_edit_count, damaging_intent: .scores.damaging, goodfaith_intent: .scores.goodfaith}' | kafkacat -P -b localhost:9092 -t wiki_revisionscore
