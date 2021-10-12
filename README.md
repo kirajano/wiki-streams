@@ -1,9 +1,9 @@
-## Wikipedia Event Streaming and Real-Time Analytics with Kafka + ElasticStack
+# Wikipedia Event Streaming and Real-Time Analytics with Kafka + ElasticStack
 
-### Purpose
+## Purpose
 Use the MediaWiki Event Stream API to run real-time analyitcs using Kafka + Elastic Stack.
 
-### Description
+## Description
 Track bot acitity created content on Wikipedia in real-time.
 Utilizig ORES ML services, track how Wikipedia tracks potential of quality damaging edits to existing artictles. Attemt to identify topics and domains that are mostly susceptible.
 Wikipedia implements a real-time ML revision algo to understand if changes are damaging or goodfaith.
@@ -14,23 +14,23 @@ This real-time data could be used to create a service that reports on:
 * etc...
   https://www.mediawiki.org/wiki/ORES/sv
 
-### Output
+## Output
 Dashboard with real-time updates of events on Wikipedia.
 ![img](screenshots/bot_analytics.PNG)
 ![img](screenshots/bot_activity_map.PNG)
 
 
-### Start
+## Start
 The application is a `docker-compose` and can be initialized simply with `docker-compose up -d`. The below information describes in detail the single steps taken to build the pipeline. The application essentially sources event data, process them in real-time and pushes out to ElasticSearch. The index is created rather seamlessly thanks to structured data coming out of Kafka.
 
 A single `start.sh` script to ran as one-liner is to be added in the next step.
 
-### Sources
+## Sources
 Wikimedia Data Stream
 https://stream.wikimedia.org/?doc#/streams
 
 
-### Stack
+## Stack
 * Streaming --> Kafka (TBD Kinesis)
 * Scripting --> Bash, Kafkacat
 * Reproducability --> Docker
@@ -39,15 +39,14 @@ For data injection on the fly (TBD):
 * Cloud --> AWS Lambda, Azure Functions
 ...
 
+
+## Pipeline & Data per Endpoint
+![img](screenshots/Pipeline.PNG)
+
+
 ### MediaWiki Endpoints
 <p>Page Events: Create, Move, Delete, Link Change, Recent Change<p>
 <p>Revision Events: Create, Score<p><br>
-
-
-### Pipeline & Data per Endpoint
----
-![img](screenshots/Pipeline.PNG)
-
 
 
 **Recentchange**:
@@ -281,7 +280,7 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 * ML content quality: damage, goodfaith (RSC)
 
 
-#### Observation
+### Observation
 ---
 
 * Matches between endpoints on entry changes but not all
@@ -297,7 +296,6 @@ Kafka Connect is using a custom SSE connector ([kudos cjmatta](https://github.co
 
 <br>
 
----
 
 ### Kafka Connect
 
