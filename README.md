@@ -21,7 +21,9 @@ Dashboard with real-time updates of events on Wikipedia.
 
 
 ## Start
-The application is a `docker-compose` and can be initialized simply with `docker-compose up -d`. The below information describes in detail the single steps taken to build the pipeline. The application essentially sources event data, process them in real-time and pushes out to ElasticSearch. The index is created rather seamlessly thanks to structured data coming out of Kafka.
+After clonign, the application is a `docker-compose` and can be initialized simply with `docker-compose up -d`. The below information describes in detail the single steps taken to build the pipeline. The application essentially sources event data, process them in real-time and pushes out to ElasticSearch. The index is created rather seamlessly thanks to structured data coming out of Kafka. 
+
+The data folder contains ElasticSearch + Kibana precomputed indicies and visuals that can be fed with new events.
 
 The *requirements file* is not necessary but contains an optional package `sample` for test streaming things on the command line. This helps with understanding the data and do some analysis.
 

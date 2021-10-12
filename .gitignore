@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 # kakfa
-data/*
 other_repos/*
 
 # presentation
