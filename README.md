@@ -1,4 +1,4 @@
-## Wikipedia Event Streaming with Kafka
+## Wikipedia Event Streaming and Real-Time Analytics with Kafka + ElasticStack
 
 ### Purpose
 Use the MediaWiki Event Stream API to run real-time analyitcs using Kafka + Elastic Stack.
@@ -24,20 +24,25 @@ Wikimedia Data Stream
 https://stream.wikimedia.org/?doc#/streams
 
 
-### Technology Stack
-* Streaming --> Conflunent / Kinesis
-* Scripting --> Python / Unix
+### Stack
+* Streaming --> Kafka (TBD Kinesis)
+* Scripting --> Bash
 * Reproducability --> Docker
-* Service --> AWS Lambda, AWS API Gateway / Azure Equivalent
-* Storage --> RS, file.db etc...
+  
+For data injection on the fly (TBD):
+* Cloud --> AWS Lambda, Azure Functions
+...
 
-### Endpoints
-<p>Page: Create, Move, Delete, Link Change, Recent Change<p>
-<p>Revision: Create, Score<p><br>
+### MediaWiki Endpoints
+<p>Page Events: Create, Move, Delete, Link Change, Recent Change<p>
+<p>Revision Events: Create, Score<p><br>
 
+
+### Pipeline & Data per Endpoint
 ---
-#### Data per Endpoint
----
+![img](screenshots/pipeline.PNG)
+
+
 
 **Recentchange**:
 https://stream.wikimedia.org//v2/stream/recentchange 
@@ -94,7 +99,7 @@ https://stream.wikimedia.org//v2/stream/recentchange
 
 **Revision Create**:
 https://stream.wikimedia.org//v2/stream/revision-create 
-* Title, URL, Lang Domain, timestamp, user_name, user_is_bot, bot_type(located in user_text), user_comment
+* Title, URL, Lang Domain, timestamp, user_name, user_is_bot, bot_type(located in user_text), user_comment <-- common with Recent Change
 * user_group(bot,editor, others)
 * user_registration_date
 * user_edit_count
@@ -154,7 +159,7 @@ https://stream.wikimedia.org//v2/stream/revision-create
 
 **Revision Score:** 
 https://stream.wikimedia.org//v2/stream/revision-score
-* Title, URL, Lang Domain, timestamp, user, user_group(bot,editor), user_is_bot, bot_type(see above), user_edit_count, user_registration_date
+* Title, URL, Lang Domain, timestamp, user, user_group(bot,editor), user_is_bot, bot_type(see above), user_edit_count, user_registration_date <-- common with Recent Change & Revision Create
 * ML content quality (mostly wikidata): --> unique to end-point
 -- damage_score
 -- goodfaith_score 
@@ -229,7 +234,7 @@ https://stream.wikimedia.org//v2/stream/revision-score
 ```
 
 
-<br>*(NOT USEFUL FOR NOW)*
+<br>*(NOT USEFUL FOR NOW - events not happening often)*
 
 **Page Delete** --> Events are more rare and used also for renaming pages
 * User name
@@ -249,16 +254,7 @@ https://stream.wikimedia.org//v2/stream/revision-score
 **Domains:** 
 Wikipedia, Wikidata, Wikisource, Wikimedia
 
-*Notes on further steps:*
-* Prototype Stream Sync (see existing approch from 'same topic' link)
-* Check API for categories to lookup (see Daniel's comment)
-* Check if user info is available who generate damaging content
-* Goodfaith and Damage Model seem to be conflicting (express mutually exclusive predictions)
 
-*Links to same topic:*
-* Dahsboard of streaming events https://esjewett.github.io/wm-eventsource-demo/
-
----
 ### DATA SCOPE DEFINITION
 ---
 
@@ -278,29 +274,6 @@ Wikipedia, Wikidata, Wikisource, Wikimedia
 * rev_content_changed (RVCR)
 * ML content quality: damage, goodfaith (RSC)
 
-
-**Possible Visuals**
-
-Plan Min:
-- How many bots crated content (en and de)? DONE 
-- Extend above to all regions and visualize on the map DONE
-- Categories of articles that being changed
-- Cloud of user comments?
-- What is the change type?
-- Length change?
-
-Plan Max:
-- What topics are being more goodfaith / damaging?
-  - How many?
-  - Geographically?
-
-<br>**Possible Inclusion**
-
-* user_group(bot,editor, others; many groups and no info what they mean) (RVCR, RSC)
-* bot_type (good candidate but need more information)
-* ML item topic: Biography, Culture etc. (RSC)
-* ML draft_topic (RSC)
-* minor_change (RSC)
 
 
 ---

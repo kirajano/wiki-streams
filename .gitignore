@@ -136,3 +136,6 @@ other_repos/*
 presentation.pptx
 ~$presentation.pptx
 *.docx
+
+# backup readme
+README_working_notes.md
