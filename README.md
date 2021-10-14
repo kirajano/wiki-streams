@@ -320,8 +320,8 @@ curl -X PUT -H "application/json" -s localhost:8081/config --data '{"compatibili
 
 ### Test Incoming topics
 
-Make checks if topics are ariving via a kafka-consloe-consumer.
-`kafka-console-consumer --topic wikipedia_stream --bootstrap-server broker:29092 --max-messages 10 --from-beginning`
+Make checks if topics are ariving via a kafka-console-consumer.
+`kafka-console-consumer --topic wiki_recentchange --bootstrap-server broker:29092 --max-messages 10 --from-beginning`
 
 Or testing via a file sync by adding *file_output_connector* and viewing file with real-time changes.
 
@@ -338,6 +338,22 @@ Although though for the endpoint the schema has been also provided like for *rec
 kafkacat -C -b localhost:9092 -t wiki_revisionscore_raw -u | jq -c 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, domain: .meta.domain, id: .meta.id, request_id: .meta.request_id, wiki: .database, page_id: .page_id, page_title: .page_title, bot: .performer.user_is_bot, user_id: .performer.user_id, user_registration_date: .performer.user_registration_dt, user_edit_count: .performer.user_edit_count, damaging_intent: .scores.damaging, goodfaith_intent: .scores.goodfaith}' | kafkacat -P -b localhost:9092 -t wiki_revisionscore
 ```
 
+Routing from Kafkacat to another topic with a schema.
+
+```
+kafka-console-consumer --topic wiki_revisionscore_raw_testing --bootstrap-server broker:29092 | kafka-avro-console-producer --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081 --topic wiki_revisionscore_testing --property value.schema='{"name": "revisionscore", "namespace": "mediawiki", "type": "record", "fields": [{"name": "uri", "type": "string"}, {"name": "domain", "type": "string"}]}'
+```
+
+Install jq
+login as root `docker exec -it -u root container /bin/bash`
+
+download jq binary into bin and make executable `curl -s -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 > bin/jq && chmod a+x bin/jq`
+
+Run the command below
+
+```
+kafka-console-consumer --topic wiki_revisionscore_raw --bootstrap-server broker:29092 | jq -c 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, domain: .meta.domain, id: .meta.id, request_id: .meta.request_id, wiki: .database, page_id: .page_id, page_title: .page_title, bot: .performer.user_is_bot, user_id: .performer.user_id, user_registration_date: .performer.user_registration_dt, user_edit_count: .performer.user_edit_count, damaging_intent: .scores.damaging, goodfaith_intent: .scores.goodfaith}' | kafka-avro-console-producer --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081 --topic wiki_revisionscore --property value.schema='{"name":"revisionscore","type":"record","namespace":"mediawiki","fields":[{"name":"uri","type":"string"},{"name":"domain","type":"string"},{"name":"id","type":"string"},{"name":"request_id","type":"string"},{"name":"wiki","type":"string"},{"name":"page_id","type":"int"},{"name":"page_title","type":"string"},{"name":"bot","type":"boolean"},{"name":"user_id","type":"int"},{"name":"user_registration_date","type":"int","logicalType":"date"},{"name":"user_edit_count","type":"int"},{"name":"damaging_intent","type":{"name":"damaging_intent","type":"record","fields":[{"name":"model_name","type":"string"},{"name":"model_version","type":"string"},{"name":"prediction","type":{"type":"array","items":"string"}},{"name":"probability","type":{"name":"probability","type":"record","fields":[{"name":"false","type":"float"},{"name":"true","type":"float"}]}}]}},{"name":"goodfaith_intent","type":{"name":"goodfaith_intent","type":"record","fields":[{"name":"model_name","type":"string"},{"name":"model_version","type":"string"},{"name":"prediction","type":{"type":"array","items":"string"}},{"name":"probability","type":{"name":"probability","type":"record","fields":[{"name":"false","type":"float"},{"name":"true","type":"float"}]}}]}}]}'
+```
 
 ### TRANSFORM with KSQL
 

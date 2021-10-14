@@ -8,15 +8,13 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     #volumes: 
-    #  - ./data/container_data/zk-data:/var/lib/zookeeper/data
-    #  - ./data/container_data/zk-txn-logs:/var/lib/zookeeper/log
+    #  - ./data/zk-data:/var/lib/zookeeper/data
+    #  - ./data/zk-txn-logs:/var/lib/zookeeper/log
 
   broker:
     image: confluentinc/cp-kafka:6.1.0
     container_name: broker
     ports:
-    # To learn about configuring Kafka for access across networks see
-    # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
       - 9092:9092
     depends_on:
       - zookeeper
@@ -33,7 +31,7 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 100
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
 #    volumes: 
-      #- ./data/container_data/kafka-data:/var/lib/kafka/data
+      #- ./data/kafka-data:/var/lib/kafka/data
       #- ./config/broker:/etc/kafka
 
   schema-registry:
@@ -98,15 +96,13 @@ services:
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '1'
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '1'
       CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components/,/data/connect-jars'
-      # External secrets config
-      # See https://docs.confluent.io/current/connect/security.html#externalizing-secrets
       CONNECT_CONFIG_PROVIDERS: 'file'
       CONNECT_CONFIG_PROVIDERS_FILE_CLASS: 'org.apache.kafka.common.config.provider.FileConfigProvider'
     volumes:
       - ./data:/data
       - ./data/file_consumer:/home/appuser/file-sinc
     command: 
-      # In the command section, $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
+      # $ are replaced with $$ to avoid the error 'Invalid interpolation format for "command" option'
       - bash 
       - -c 
       - |
@@ -123,7 +119,7 @@ services:
         echo "Launching Kafka Connect worker"
         /etc/confluent/docker/run & 
         #
-        echo "Waiting for Kafka Connect to start listening on $$CONNECT_REST_ADVERTISED_HOST_NAME:$$CONNECT_REST_PORT ⏳"
+        echo "Waiting for Kafka Connect to start listening on $$CONNECT_REST_ADVERTISED_HOST_NAME:$$CONNECT_REST_PORT "
         while : ; do
           curl_status=$$(curl -s -o /dev/null -w %{http_code} http://$$CONNECT_REST_ADVERTISED_HOST_NAME:$$CONNECT_REST_PORT/connectors)
           echo -e $$(date) " Kafka Connect listener HTTP state: " $$curl_status " (waiting for 200)"
