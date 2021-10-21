@@ -366,6 +366,11 @@ kafka-console-consumer --topic wiki_revisionscore_raw --bootstrap-server broker:
 kafka-console-consumer --topic wiki_revisionscore_raw --bootstrap-server broker:29092 | jq -c 'select(.meta.domain == "en.wikipedia.org") | {uri: .meta.uri, user_registration_date: .performer.user_registration_dt}' | kafka-avro-console-producer --bootstrap-server broker:29092 --property schema.registry.url=http://schema-registry:8081 --topic wiki_revisionscore_testing --property value.schema='{"name": "revisionscore", "namespace": "mediawiki", "type": "record", "fields": [{"name": "uri", "type": "string"}, {"default": null, "name": "user_registration_date", "type":["null", {"type": "string", "logicalType":"timestamp-millis"}]}]}'
 ```
 
+The schema definition should follow the ["null", "type"] pattern. It is about transforming with jq in the right format (https://stackoverflow.com/questions/27485580/how-to-fix-expected-start-union-got-value-number-int-when-converting-json-to-av). Here is the *user_id* transformed successfully but need also other fields:
+
+```
+kafka-console-consumer --topic wiki_revisionscore_raw --bootstrap-server broker:29092 | jq -c '.performer.user_id |= if type == "number" then {"int": .} else null end'
+```
 
 FINAL but needs to be fixed when above is fixed
 
